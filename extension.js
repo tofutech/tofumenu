@@ -100,6 +100,7 @@ var MenuButton = GObject.registerClass(class FedoraMenu_MenuButton extends Panel
 		this.item3 = new PopupMenu.PopupSeparatorMenuItem()
 		this.item4 = new PopupMenu.PopupMenuItem(_('Software Center'))
 		this.item5 = new PopupMenu.PopupMenuItem(_('Activities'))
+		this.item7 = new PopupMenu.PopupSeparatorMenuItem()
 		this.item6 = new PopupMenu.PopupMenuItem(_('Force Quit App'))
 		this.item7 = new PopupMenu.PopupSeparatorMenuItem()
 		this.item8 = new PopupMenu.PopupMenuItem(_('Terminal'))
