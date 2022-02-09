@@ -17,7 +17,7 @@ function _aboutThisDistro() {
 }
 
 function _terminal() {
-	Util.spawn(['xdg-terminal'])
+	Util.spawn(['gnome-terminal'])
 }
 
 function _systemPreferences() {
@@ -33,7 +33,12 @@ function _missionControl() {
 }
 
 function _forceQuit() {
-	Util.spawn(['xkill'])
+	var window_list = global.get_window_actors();
+	var active_window_actor = window_list.find(window => window.meta_window.has_focus());
+	var active_window = active_window_actor.get_meta_window()
+	var pid = active_window.get_pid();
+	
+	Util.spawn(['kill', '-s', '9', pid.toString()])
 }
 
 function _sleep() {
@@ -41,19 +46,19 @@ function _sleep() {
 }
 
 function _restart() {
-	Util.spawn(['systemctl', 'reboot'])
+	Util.spawn(['gnome-session-quit', '--reboot'])
 }
 
 function _shutdown() {
-	Util.spawn(['systemctl', 'poweroff', '-prompt'])
+	Util.spawn(['gnome-session-quit', '--power-off'])
 }
 
 function _lockScreen() {
-	Util.spawn(['gnome-screensaver-command -l'])
+	Util.spawn(['dbus-send', '--type=method_call', '--dest=org.gnome.ScreenSaver', '/org/gnome/ScreenSaver', 'org.gnome.ScreenSaver.Lock'])
 }
 
 function _logOut() {
-	Util.spawn(['gnome-session-quit'])
+	Util.spawn(['gnome-session-quit', '--logout'])
 }
 
 function _extensions() {
@@ -96,22 +101,31 @@ var MenuButton = GObject.registerClass(class FedoraMenu_MenuButton extends Panel
 
 		// Menu
 		this.item1 = new PopupMenu.PopupMenuItem(_('About My System'))
-		this.item2 = new PopupMenu.PopupMenuItem(_('System Settings'))
-		this.item3 = new PopupMenu.PopupSeparatorMenuItem()
+		this.item2 = new PopupMenu.PopupSeparatorMenuItem()
+		this.item3 = new PopupMenu.PopupMenuItem(_('System Settings'))
 		this.item4 = new PopupMenu.PopupMenuItem(_('Software Center'))
-		this.item5 = new PopupMenu.PopupMenuItem(_('Activities'))
-		this.item6 = new PopupMenu.PopupMenuItem(_('Force Quit App'))
+		this.item5 = new PopupMenu.PopupSeparatorMenuItem()
+		this.item6 = new PopupMenu.PopupMenuItem(_('Activities'))
 		this.item7 = new PopupMenu.PopupSeparatorMenuItem()
-		this.item8 = new PopupMenu.PopupMenuItem(_('Terminal'))
-		this.item9 = new PopupMenu.PopupMenuItem(_('Extensions'))
+		this.item8 = new PopupMenu.PopupMenuItem(_('Force Quit App'))
+		this.item9 = new PopupMenu.PopupSeparatorMenuItem()
+		this.item10 = new PopupMenu.PopupMenuItem(_('Sleep'))
+		this.item11 = new PopupMenu.PopupMenuItem(_('Restart...'))
+		this.item12 = new PopupMenu.PopupMenuItem(_('Shut Down...'))
+		this.item13 = new PopupMenu.PopupSeparatorMenuItem()
+		this.item14 = new PopupMenu.PopupMenuItem(_('Lock Screen'))
+		this.item15 = new PopupMenu.PopupMenuItem(_('Log Out'))
 
 		this.item1.connect('activate', () => _aboutThisDistro())
-		this.item2.connect('activate', () => _systemPreferences())
+		this.item3.connect('activate', () => _systemPreferences())
 		this.item4.connect('activate', () => _appStore())
-		this.item5.connect('activate', () => _missionControl())
-		this.item6.connect('activate', () => _forceQuit())
-		this.item8.connect('activate', () => _terminal())
-		this.item9.connect('activate', () => _extensions())
+		this.item6.connect('activate', () => _missionControl())
+		this.item8.connect('activate', () => _forceQuit())
+		this.item10.connect('activate', () => _sleep())
+		this.item11.connect('activate', () => _restart())
+		this.item12.connect('activate', () => _shutdown())
+		this.item14.connect('activate', () => _lockScreen())
+		this.item15.connect('activate', () => _logOut())
 		this.menu.addMenuItem(this.item1)
 		this.menu.addMenuItem(this.item2)
 		this.menu.addMenuItem(this.item3)
@@ -121,6 +135,12 @@ var MenuButton = GObject.registerClass(class FedoraMenu_MenuButton extends Panel
 		this.menu.addMenuItem(this.item7)
 		this.menu.addMenuItem(this.item8)
 		this.menu.addMenuItem(this.item9)
+		this.menu.addMenuItem(this.item10)
+		this.menu.addMenuItem(this.item11)
+		this.menu.addMenuItem(this.item12)
+		this.menu.addMenuItem(this.item13)
+		this.menu.addMenuItem(this.item14)
+		this.menu.addMenuItem(this.item15)
 
 		//bind middle click option to toggle overview
 		this.connect('button-press-event', _middleClick.bind(this));
