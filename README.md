@@ -1,4 +1,4 @@
-# Notice
+# Notice: This Extension is deprecated!
 This extension is extremely outdated and is only being hosted for archival purposes.
 
 # Tofu Menu
